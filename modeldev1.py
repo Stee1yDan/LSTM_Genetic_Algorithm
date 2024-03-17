@@ -104,6 +104,27 @@ class ModelWrapper:
 
         self.score = r2_score(temp, predictions)
 
+    def to_string(self):
+        print("ModelWrapper instance with:")
+        print("\t-- Has second layer:", self.has_second_layer)
+        print("\t-- Has third layer:", self.has_third_layer)
+        print("\t-- Hyperparameters:", self.hyperparameters)
+        print("\t-- Neurons number 1:", self.neurons_number_1)
+        print("\t-- Neurons number 2:", self.neurons_number_2)
+        print("\t-- Neurons number 3:", self.neurons_number_3)
+        print("\t-- Dense number:", self.dense_number)
+        print("\t-- Optimizer:", self.optimizer)
+        print("\t-- Prediction units:", self.prediction_units)
+        print("\t-- Future units:", self.future_units)
+        print("\t-- Dropout rate:", self.dropout_rate)
+        print("\t-- Loss:", self.loss)
+        print("\t-- Scaler:", self.scaler)
+        print("\t-- Score:", self.score)
+        print("\t-- x_test:", self.x_test)
+        print("\t-- y_test:", self.y_test)
+        print("\t-- x_train:", self.x_train)
+        print("\t-- y_train:", self.y_train)
+
 
 def calculate_metrics(y_test, y_pred):
     mse = mean_squared_error(y_test, y_pred)
