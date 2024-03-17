@@ -57,7 +57,7 @@ class ModelWrapper:
         model.add(Dense(units=1))
 
         model.compile(optimizer=self.optimizer, loss=self.loss)
-        model.fit(self.x_train, self.y_train, epochs=5, batch_size=128)
+        model.fit(self.x_train, self.y_train, epochs=10, batch_size=128)
 
         self.model = model
 
@@ -132,15 +132,15 @@ def calculate_metrics(y_test, y_pred):
 def make_child(parent_1: ModelWrapper, parent_2: ModelWrapper):
     parents_hyperparameters = list(set(parent_1.hyperparameters + parent_2.hyperparameters))
     current_hyperparameters = list(set(["Close", "Open"] + random.sample(parents_hyperparameters,
-                                                                         random.randint(0,
+                                                                         random.randint(2,
                                                                                         len(parents_hyperparameters)))))
 
     return ModelWrapper(random.choice([parent_1.has_second_layer, parent_2.has_second_layer]),
                         random.choice([parent_1.has_third_layer, parent_2.has_third_layer]),
                         current_hyperparameters,
-                        int((parent_1.layer_1_neurons + parent_2.layer_1_neurons) / 2),
-                        int((parent_1.layer_2_neurons + parent_2.layer_2_neurons) / 2),
-                        int((parent_1.layer_3_neurons + parent_2.layer_3_neurons) / 2),
+                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
+                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
+                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
                         int((parent_1.dense_number + parent_2.dense_number) / 2),
                         random.choice([parent_1.dropout_rate, parent_2.dropout_rate]),
                         random.choice([parent_1.optimizer, parent_2.optimizer]),
@@ -210,21 +210,22 @@ optimizers = ["adagrad", "adam", "adamax", "rmsprop", "sgd"]
 possible_hyperparameters = ["RSI", "ATR", "Signal_Line", "pct_change", "log_returns"]
 loss_functions = ["mse", "mae"]
 dropout_rates = [0.1, 0.2, 0.3, 0.4, 0.5]
+neurons_in_layer = [8, 16, 32, 64, 128, 256]
 
 
 def start_genetic_algorithm():
     generation = []
 
-    for i in range(5):
+    for i in range(20):
         current_hyperparameters = ["Close", "Open"] + random.sample(possible_hyperparameters,
-                                                                    random.randint(0, len(possible_hyperparameters)))
+                                                                    random.randint(1, len(possible_hyperparameters)))
 
         model = ModelWrapper(random.choice([True, False]),
                              random.choice([True]),
                              current_hyperparameters,
-                             random.randint(1, 256),
-                             random.randint(1, 256),
-                             random.randint(1, 256),
+                             random.choice(neurons_in_layer),
+                             random.choice(neurons_in_layer),
+                             random.choice(neurons_in_layer),
                              random.randint(1, 24),
                              random.choice(dropout_rates),
                              random.choice(optimizers),
@@ -235,13 +236,14 @@ def start_genetic_algorithm():
         model.prepare_data()
         model.build_model()
         model.predict()
+        model.to_string()
 
         generation.append(model)
 
     generation.sort(key=lambda x: x.score, reverse=True)
 
     for gen in range(5):
-        generation = generation[0:3]
+        generation = generation[0:5]
 
         print("Current generation: " + str(gen))
         print("Current winner is: " + str(generation[0].score))
@@ -253,13 +255,18 @@ def start_genetic_algorithm():
                 new_model.prepare_data()
                 new_model.build_model()
                 new_model.predict()
+                new_model.to_string()
+
 
                 new_generation.append(new_model)
 
-        generation.sort(key=lambda x: x.score, reverse=True)
+        new_generation.sort(key=lambda x: x.score, reverse=True)
         generation = new_generation
 
-    print(generation[0].to_string())
+    generation = generation[0:5]
+    for model in generation:
+        model.to_string()
+        print("-----------")
 
 
 start_genetic_algorithm()
