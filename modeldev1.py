@@ -263,10 +263,10 @@ def start_genetic_algorithm():
         new_generation.sort(key=lambda x: x.score, reverse=True)
         generation = new_generation
 
-    generation = generation[0:5]
-    for model in generation:
-        model.to_string()
-        print("-----------")
+
+    print("-----Winner-----")
+    overall_winner = generation[0]
+    overall_winner.to_string()
 
 
 start_genetic_algorithm()
