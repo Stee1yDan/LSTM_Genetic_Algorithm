@@ -1,4 +1,5 @@
 import random
+from typing import List
 
 import tensorflow as tf
 from tensorflow import keras
@@ -8,16 +9,26 @@ from keras.layers import Dense, Dropout, LSTM, Input
 import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
+import xlsxwriter as xlsx
+import pickle
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 from sklearn.metrics import mean_squared_error, r2_score, mean_squared_log_error, mean_absolute_percentage_error, \
     root_mean_squared_error, max_error
 
+mutation_rates = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
+optimizers = ["adagrad", "adam", "adamax", "rmsprop", "sgd"]
+possible_hyperparameters = ["RSI", "ATR", "Signal_Line", "pct_change", "log_returns"]
+loss_functions = ["mse", "mae"]
+dropout_rates = [0.1, 0.2, 0.3, 0.4, 0.5]
+neurons_in_layer = [8, 16, 32, 64, 128, 256]
+
 
 class ModelWrapper:
-    def __init__(self, has_second_layer, has_third_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
+    def __init__(self, ticker, has_second_layer, has_third_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
                  layer_3_neurons, dense_number, dropout_rate, optimizer, prediction_units, future_units, loss):
+        self.ticker = ticker
         self.scaler = None
         self.score = None
         self.y_test = None
@@ -57,7 +68,7 @@ class ModelWrapper:
         model.add(Dense(units=1))
 
         model.compile(optimizer=self.optimizer, loss=self.loss)
-        model.fit(self.x_train, self.y_train, epochs=10, batch_size=128)
+        model.fit(self.x_train, self.y_train, epochs=5, batch_size=128)
 
         self.model = model
 
@@ -135,97 +146,171 @@ def make_child(parent_1: ModelWrapper, parent_2: ModelWrapper):
                                                                          random.randint(2,
                                                                                         len(parents_hyperparameters)))))
 
-    return ModelWrapper(random.choice([parent_1.has_second_layer, parent_2.has_second_layer]),
+    return ModelWrapper(parent_1.ticker,
+                        random.choice([parent_1.has_second_layer, parent_2.has_second_layer]),
                         random.choice([parent_1.has_third_layer, parent_2.has_third_layer]),
                         current_hyperparameters,
-                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
-                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
-                        random.choice([parent_1.layer_1_neurons, parent_2.layer_1_neurons]),
+                        int((parent_1.layer_1_neurons + parent_2.layer_1_neurons) / 2),
+                        int((parent_1.layer_2_neurons + parent_2.layer_2_neurons) / 2),
+                        int((parent_1.layer_3_neurons + parent_2.layer_3_neurons) / 2),
                         int((parent_1.dense_number + parent_2.dense_number) / 2),
-                        random.choice([parent_1.dropout_rate, parent_2.dropout_rate]),
+                        float((parent_1.dropout_rate + parent_2.dropout_rate) / 2),
                         random.choice([parent_1.optimizer, parent_2.optimizer]),
                         7,
                         1,
                         random.choice([parent_1.loss, parent_2.loss]))
 
 
-data = yf.download('AAPL', '2020-01-12', '2024-01-12', interval='1d')
+def make_mutant_child(parent_1: ModelWrapper, parent_2: ModelWrapper):
+    parents_hyperparameters = list(set(parent_1.hyperparameters + parent_2.hyperparameters))
+    current_hyperparameters = list(set(["Close", "Open"] + random.sample(parents_hyperparameters,
+                                                                         random.randint(2,
+                                                                                        len(parents_hyperparameters)))))
 
-data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
-data['EMA26'] = data['Close'].ewm(span=26, adjust=False).mean()
-data['MACD'] = data['EMA12'] - data['EMA26']
-data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
-
-data["HL"] = data["High"] - data["Low"]
-data["HC"] = abs(data["High"] - data["Close"].shift())
-data["LC"] = abs(data["Low"] - data["Close"].shift())
-data["TR"] = data[["HL", "HC", "LC"]].max(axis=1)
-data["ATR"] = data["TR"].rolling(window=14).mean()
-
-delta = data["Close"].diff(1)
-delta = delta.dropna()
-up = delta.copy()
-down = delta.copy()
-up[up < 0] = 0
-down[down > 0] = 0
-average_gain = up.rolling(window=14).mean()
-average_loss = abs(down.rolling(window=14).mean())
-rs = average_gain / average_loss
-RSI = 100.0 - (100.0 / (1.0 + rs))
-
-data["RSI"] = RSI
-
-data = data.iloc[14:]
-
-data['pct_change'] = data.Close.pct_change()
-data['log_returns'] = np.log(1 + data['pct_change'])
-
-data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
-data['EMA26'] = data['Close'].ewm(span=26, adjust=False).mean()
-data['MACD'] = data['EMA12'] - data['EMA26']
-data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
-
-data["HL"] = data["High"] - data["Low"]
-data["HC"] = abs(data["High"] - data["Close"].shift())
-data["LC"] = abs(data["Low"] - data["Close"].shift())
-data["TR"] = data[["HL", "HC", "LC"]].max(axis=1)
-data["ATR"] = data["TR"].rolling(window=14).mean()
-
-delta = data["Close"].diff(1)
-delta = delta.dropna()
-up = delta.copy()
-down = delta.copy()
-up[up < 0] = 0
-down[down > 0] = 0
-average_gain = up.rolling(window=14).mean()
-average_loss = abs(down.rolling(window=14).mean())
-rs = average_gain / average_loss
-RSI = 100.0 - (100.0 / (1.0 + rs))
-
-data["RSI"] = RSI
-
-data = data.iloc[14:]
-
-optimizers = ["adagrad", "adam", "adamax", "rmsprop", "sgd"]
-possible_hyperparameters = ["RSI", "ATR", "Signal_Line", "pct_change", "log_returns"]
-loss_functions = ["mse", "mae"]
-dropout_rates = [0.1, 0.2, 0.3, 0.4, 0.5]
-neurons_in_layer = [8, 16, 32, 64, 128, 256]
+    return ModelWrapper(parent_1.ticker,
+                        random.choice([parent_1.has_second_layer, parent_2.has_second_layer]),
+                        random.choice([parent_1.has_third_layer, parent_2.has_third_layer]),
+                        current_hyperparameters,
+                        int((parent_1.layer_1_neurons + parent_2.layer_1_neurons) / 2 * random.choice(mutation_rates)),
+                        int((parent_1.layer_2_neurons + parent_2.layer_2_neurons) / 2 * random.choice(mutation_rates)),
+                        int((parent_1.layer_3_neurons + parent_2.layer_3_neurons) / 2 * random.choice(mutation_rates)),
+                        int((parent_1.dense_number + parent_2.dense_number) / 2 * random.choice(mutation_rates)),
+                        float((parent_1.dropout_rate + parent_2.dropout_rate) / 2),
+                        random.choice([parent_1.optimizer, parent_2.optimizer]),
+                        7,
+                        1,
+                        random.choice([parent_1.loss, parent_2.loss]))
 
 
-def start_genetic_algorithm():
+data = None
+
+
+def download_data(ticker: str):
+    global data
+    data = yf.download(ticker, '2020-01-12', '2024-01-12', interval='1d')
+
+
+def prepare_data():
+    global data
+    data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
+    data['EMA26'] = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = data['EMA12'] - data['EMA26']
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+
+    data["HL"] = data["High"] - data["Low"]
+    data["HC"] = abs(data["High"] - data["Close"].shift())
+    data["LC"] = abs(data["Low"] - data["Close"].shift())
+    data["TR"] = data[["HL", "HC", "LC"]].max(axis=1)
+    data["ATR"] = data["TR"].rolling(window=14).mean()
+
+    delta = data["Close"].diff(1)
+    delta = delta.dropna()
+    up = delta.copy()
+    down = delta.copy()
+    up[up < 0] = 0
+    down[down > 0] = 0
+    average_gain = up.rolling(window=14).mean()
+    average_loss = abs(down.rolling(window=14).mean())
+    rs = average_gain / average_loss
+    RSI = 100.0 - (100.0 / (1.0 + rs))
+
+    data["RSI"] = RSI
+
+    data = data.iloc[14:]
+
+    data['pct_change'] = data.Close.pct_change()
+    data['log_returns'] = np.log(1 + data['pct_change'])
+
+    data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
+    data['EMA26'] = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = data['EMA12'] - data['EMA26']
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+
+    data["HL"] = data["High"] - data["Low"]
+    data["HC"] = abs(data["High"] - data["Close"].shift())
+    data["LC"] = abs(data["Low"] - data["Close"].shift())
+    data["TR"] = data[["HL", "HC", "LC"]].max(axis=1)
+    data["ATR"] = data["TR"].rolling(window=14).mean()
+
+    delta = data["Close"].diff(1)
+    delta = delta.dropna()
+    up = delta.copy()
+    down = delta.copy()
+    up[up < 0] = 0
+    down[down > 0] = 0
+    average_gain = up.rolling(window=14).mean()
+    average_loss = abs(down.rolling(window=14).mean())
+    rs = average_gain / average_loss
+    RSI = 100.0 - (100.0 / (1.0 + rs))
+
+    data["RSI"] = RSI
+
+    data = data.iloc[14:]
+
+
+tickers: list[str] = ["AAPL", "MSFT", "TSLA", "CAT", "KO", "MCD", "SBUX", "AMZN", "ADBE", "CMCSA", "JNJ", "DIS", "INTC",
+                      "NVDA",
+                      "AMD", "PFE", "PEP", "GM", "BA", "RACE", "META", "GOOG", "GE", "GD", "MA", "ORCL", "PYPL",
+                      "NKE",
+                      "AXP", "BEN", "BKNG", "CL", "DAL", "DPZ", "EA", "V", "WAB", "XEL", "YUM"]
+tickers.sort()
+
+row_param: list[str] = ["layer_1", "layer_2", "layer_3", "dense_layer", "loss", "optimizer", "RSI", "ATR",
+                        "Signal_Line",
+                        "pct_change", "log_returns", "score"]
+
+workbook = xlsx.Workbook('models.xlsx')
+worksheet = workbook.add_worksheet()
+
+
+def prepare_workbook():
+    global tickers
+    global row_param
+    global workbook
+    global worksheet
+
+    worksheet.write_column(1, 0, tickers)
+    worksheet.write_row(0, 1, row_param)
+
+
+def write_data_to_sheet(model_wrapper: ModelWrapper):
+    global tickers
+    global row_param
+    global workbook
+    global worksheet
+
+    model_row = tickers.index(model_wrapper.ticker) + 1
+
+    worksheet.write(model_row, row_param.index("layer_1") + 1, model_wrapper.layer_1_neurons)
+    worksheet.write(model_row, row_param.index("layer_2") + 1, model_wrapper.layer_2_neurons)
+    worksheet.write(model_row, row_param.index("layer_3") + 1, model_wrapper.layer_3_neurons)
+    worksheet.write(model_row, row_param.index("dense_layer") + 1, model_wrapper.dense_number)
+    worksheet.write(model_row, row_param.index("loss") + 1, model_wrapper.loss)
+    worksheet.write(model_row, row_param.index("loss") + 1, model_wrapper.loss)
+    worksheet.write(model_row, row_param.index("optimizer") + 1, model_wrapper.optimizer)
+    worksheet.write(model_row, row_param.index("score") + 1, model_wrapper.score)
+
+    worksheet.write(model_row, row_param.index("RSI") + 1, "RSI" in model_wrapper.hyperparameters)
+    worksheet.write(model_row, row_param.index("ATR") + 1, "ATR" in model_wrapper.hyperparameters)
+    worksheet.write(model_row, row_param.index("Signal_Line") + 1, "Signal_Line" in model_wrapper.hyperparameters)
+    worksheet.write(model_row, row_param.index("pct_change") + 1, "pct_change" in model_wrapper.hyperparameters)
+    worksheet.write(model_row, row_param.index("log_returns") + 1, "log_returns" in model_wrapper.hyperparameters)
+
+
+def start_genetic_algorithm(ticker: str):
     generation = []
 
-    for i in range(20):
+    for i in range(10):
         current_hyperparameters = ["Close", "Open"] + random.sample(possible_hyperparameters,
                                                                     random.randint(1, len(possible_hyperparameters)))
 
-        model = ModelWrapper(random.choice([True, False]),
+        model = ModelWrapper(ticker,
+                             random.choice([True]),
                              random.choice([True]),
                              current_hyperparameters,
-                             random.choice(neurons_in_layer),
-                             random.choice(neurons_in_layer),
-                             random.choice(neurons_in_layer),
+                             random.randint(1, 256),
+                             random.randint(1, 256),
+                             random.randint(1, 256),
                              random.randint(1, 24),
                              random.choice(dropout_rates),
                              random.choice(optimizers),
@@ -242,31 +327,43 @@ def start_genetic_algorithm():
 
     generation.sort(key=lambda x: x.score, reverse=True)
 
-    for gen in range(5):
+    best_model: ModelWrapper = generation[0]
+
+    for i in range(0, 1):
         generation = generation[0:5]
 
-        print("Current generation: " + str(gen))
+        print("Current generation: " + str(i))
         print("Current winner is: " + str(generation[0].score))
-        new_generation = []
+        new_generation: list[ModelWrapper] = []
 
         for i in range(0, len(generation)):
             for j in range(i, len(generation)):
-                new_model = make_child(generation[i], generation[j])
+                new_model = make_mutant_child(generation[i], generation[j])
                 new_model.prepare_data()
                 new_model.build_model()
                 new_model.predict()
                 new_model.to_string()
-
-
                 new_generation.append(new_model)
 
         new_generation.sort(key=lambda x: x.score, reverse=True)
         generation = new_generation
 
+        if float(best_model.score) < float(new_generation[0].score):
+            best_model = new_generation[0]
 
-    print("-----Winner-----")
-    overall_winner = generation[0]
-    overall_winner.to_string()
+    print("_____________________________Best Model:")
+    best_model.to_string()
+    write_data_to_sheet(best_model)
+    with open(ticker + ".pickle", "wb") as outfile:
+        pickle.dump(best_model.hyperparameters, outfile)
+    return
 
 
-start_genetic_algorithm()
+prepare_workbook()
+
+for ticker in tickers[0:2]:
+    download_data(ticker)
+    prepare_data()
+    start_genetic_algorithm(ticker)
+
+workbook.close()
