@@ -281,7 +281,7 @@ tickers: list[str] = ["AAPL", "MSFT", "TSLA", "CAT", "KO", "MCD", "SBUX", "AMZN"
                       "AXP", "BEN", "BKNG", "CL", "DAL", "DPZ", "EA", "V", "WAB", "XEL", "YUM"]
 tickers.sort()
 
-row_param: list[str] = ["layer_1", "layer_2", "layer_3", "dense_layer", "loss", "optimizer", "RSI", "ATR",
+row_param: list[str] = ["layer_1", "layer_2", "layer_3", "dense_layer","dropout_rate", "loss", "optimizer", "RSI", "ATR",
                         "Signal_Line",
                         "pct_change", "log_returns", "score"]
 
@@ -299,33 +299,33 @@ def prepare_workbook():
     worksheet.write_row(0, 1, row_param)
 
 
-def write_data_to_sheet(model_wrapper: ModelWrapper):
+def write_data_to_sheet(model_parameters: ModelParameters):
     global tickers
     global row_param
     global workbook
     global worksheet
 
-    model_row = tickers.index(model_wrapper.ticker) + 1
+    model_row = tickers.index(model_parameters.ticker) + 1
 
-    worksheet.write(model_row, row_param.index("layer_1") + 1, model_wrapper.layer_1_neurons)
+    worksheet.write(model_row, row_param.index("layer_1") + 1, model_parameters.layer_1_neurons)
 
-    if model_wrapper.has_second_layer:
-        worksheet.write(model_row, row_param.index("layer_2") + 1, model_wrapper.layer_2_neurons)
+    if model_parameters.has_second_layer:
+        worksheet.write(model_row, row_param.index("layer_2") + 1, model_parameters.layer_2_neurons)
     else:
         worksheet.write(model_row, row_param.index("layer_2") + 1, 0)
 
-    worksheet.write(model_row, row_param.index("layer_3") + 1, model_wrapper.layer_3_neurons)
-    worksheet.write(model_row, row_param.index("dense_layer") + 1, model_wrapper.dense_number)
-    worksheet.write(model_row, row_param.index("loss") + 1, model_wrapper.loss)
-    worksheet.write(model_row, row_param.index("loss") + 1, model_wrapper.loss)
-    worksheet.write(model_row, row_param.index("optimizer") + 1, model_wrapper.optimizer)
-    worksheet.write(model_row, row_param.index("score") + 1, model_wrapper.score)
+    worksheet.write(model_row, row_param.index("layer_3") + 1, model_parameters.layer_3_neurons)
+    worksheet.write(model_row, row_param.index("dense_layer") + 1, model_parameters.dense_number)
+    worksheet.write(model_row, row_param.index("dropout_rate") + 1, model_parameters.dropout_rate)
+    worksheet.write(model_row, row_param.index("loss") + 1, model_parameters.loss)
+    worksheet.write(model_row, row_param.index("optimizer") + 1, model_parameters.optimizer)
+    worksheet.write(model_row, row_param.index("score") + 1, model_parameters.score)
 
-    worksheet.write(model_row, row_param.index("RSI") + 1, "RSI" in model_wrapper.hyperparameters)
-    worksheet.write(model_row, row_param.index("ATR") + 1, "ATR" in model_wrapper.hyperparameters)
-    worksheet.write(model_row, row_param.index("Signal_Line") + 1, "Signal_Line" in model_wrapper.hyperparameters)
-    worksheet.write(model_row, row_param.index("pct_change") + 1, "pct_change" in model_wrapper.hyperparameters)
-    worksheet.write(model_row, row_param.index("log_returns") + 1, "log_returns" in model_wrapper.hyperparameters)
+    worksheet.write(model_row, row_param.index("RSI") + 1, "RSI" in model_parameters.hyperparameters)
+    worksheet.write(model_row, row_param.index("ATR") + 1, "ATR" in model_parameters.hyperparameters)
+    worksheet.write(model_row, row_param.index("Signal_Line") + 1, "Signal_Line" in model_parameters.hyperparameters)
+    worksheet.write(model_row, row_param.index("pct_change") + 1, "pct_change" in model_parameters.hyperparameters)
+    worksheet.write(model_row, row_param.index("log_returns") + 1, "log_returns" in model_parameters.hyperparameters)
 
 
 def start_genetic_algorithm(ticker: str):
@@ -393,14 +393,15 @@ def start_genetic_algorithm(ticker: str):
 
 prepare_workbook()
 
-current_ticker = "YUM"
-data = download_data(current_ticker)
-data = prepare_data(data)
-start_genetic_algorithm(current_ticker)
+# current_ticker = "META"
+# data = download_data(current_ticker)
+# data = prepare_data(data)
+# start_genetic_algorithm(current_ticker)
 
-# for ticker in tickers:
-#     test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
-#     print(ticker + ": " + str(test.score))
+for ticker in tickers:
+    test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
+    write_data_to_sheet(test)
+    print(ticker + ": " + str(test.score))
 
 
 workbook.close()
