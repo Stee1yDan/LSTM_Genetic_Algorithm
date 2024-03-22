@@ -12,7 +12,6 @@ from dateutil.relativedelta import relativedelta
 import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
-import xlsxwriter as xlsx
 import pickle
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -26,6 +25,7 @@ possible_hyperparameters = ["RSI", "ATR", "Signal_Line", "pct_change", "log_retu
 loss_functions = ["mse", "mae"]
 dropout_rates = [0.1, 0.2, 0.3, 0.4, 0.5]
 neurons_in_layer = [8, 16, 32, 64, 128, 256]
+
 
 class ModelParameters:
     def __init__(self, ticker, has_second_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
@@ -41,6 +41,7 @@ class ModelParameters:
         self.optimizer = optimizer
         self.loss = loss
         self.score = score
+
 
 class ModelWrapper:
     def __init__(self, ticker, has_second_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
@@ -68,7 +69,9 @@ class ModelWrapper:
         self.loss = loss
 
     def return_model_parameters(self):
-        return ModelParameters(self.ticker, self.has_second_layer, self.hyperparameters, self.layer_1_neurons, self.layer_2_neurons, self.layer_3_neurons, self.dense_number, self.dropout_rate, self.optimizer, self.loss, self.score)
+        return ModelParameters(self.ticker, self.has_second_layer, self.hyperparameters, self.layer_1_neurons,
+                               self.layer_2_neurons, self.layer_3_neurons, self.dense_number, self.dropout_rate,
+                               self.optimizer, self.loss, self.score)
 
     def build_model(self):
         model = Sequential()
@@ -212,7 +215,8 @@ data = None
 
 
 def download_data(ticker: str):
-    return yf.download(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'), end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
+    return yf.download(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'),
+                       end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
 
 
 def prepare_data(data):
@@ -281,51 +285,10 @@ tickers: list[str] = ["AAPL", "MSFT", "TSLA", "CAT", "KO", "MCD", "SBUX", "AMZN"
                       "AXP", "BEN", "BKNG", "CL", "DAL", "DPZ", "EA", "V", "WAB", "XEL", "YUM"]
 tickers.sort()
 
-row_param: list[str] = ["layer_1", "layer_2", "layer_3", "dense_layer","dropout_rate", "loss", "optimizer", "RSI", "ATR",
+row_param: list[str] = ["layer_1", "layer_2", "layer_3", "dense_layer", "dropout_rate", "loss", "optimizer", "RSI",
+                        "ATR",
                         "Signal_Line",
                         "pct_change", "log_returns", "score"]
-
-workbook = xlsx.Workbook('models.xlsx')
-worksheet = workbook.add_worksheet()
-
-
-def prepare_workbook():
-    global tickers
-    global row_param
-    global workbook
-    global worksheet
-
-    worksheet.write_column(1, 0, tickers)
-    worksheet.write_row(0, 1, row_param)
-
-
-def write_data_to_sheet(model_parameters: ModelParameters):
-    global tickers
-    global row_param
-    global workbook
-    global worksheet
-
-    model_row = tickers.index(model_parameters.ticker) + 1
-
-    worksheet.write(model_row, row_param.index("layer_1") + 1, model_parameters.layer_1_neurons)
-
-    if model_parameters.has_second_layer:
-        worksheet.write(model_row, row_param.index("layer_2") + 1, model_parameters.layer_2_neurons)
-    else:
-        worksheet.write(model_row, row_param.index("layer_2") + 1, 0)
-
-    worksheet.write(model_row, row_param.index("layer_3") + 1, model_parameters.layer_3_neurons)
-    worksheet.write(model_row, row_param.index("dense_layer") + 1, model_parameters.dense_number)
-    worksheet.write(model_row, row_param.index("dropout_rate") + 1, model_parameters.dropout_rate)
-    worksheet.write(model_row, row_param.index("loss") + 1, model_parameters.loss)
-    worksheet.write(model_row, row_param.index("optimizer") + 1, model_parameters.optimizer)
-    worksheet.write(model_row, row_param.index("score") + 1, model_parameters.score)
-
-    worksheet.write(model_row, row_param.index("RSI") + 1, "RSI" in model_parameters.hyperparameters)
-    worksheet.write(model_row, row_param.index("ATR") + 1, "ATR" in model_parameters.hyperparameters)
-    worksheet.write(model_row, row_param.index("Signal_Line") + 1, "Signal_Line" in model_parameters.hyperparameters)
-    worksheet.write(model_row, row_param.index("pct_change") + 1, "pct_change" in model_parameters.hyperparameters)
-    worksheet.write(model_row, row_param.index("log_returns") + 1, "log_returns" in model_parameters.hyperparameters)
 
 
 def start_genetic_algorithm(ticker: str):
@@ -381,17 +344,14 @@ def start_genetic_algorithm(ticker: str):
             if float(best_model.score) < float(new_generation[0].score):
                 best_model = new_generation[0]
 
-
         print("_____________________________Best Model:")
         best_model.to_string()
         best_model.save_graphic()
-        write_data_to_sheet(best_model)
         best_model.model.save(ticker + "_model.keras")
         with open(ticker + ".pickle", "wb") as outfile:
             pickle.dump(best_model.return_model_parameters(), outfile)
             outfile.close()
 
-prepare_workbook()
 
 # current_ticker = "META"
 # data = download_data(current_ticker)
@@ -400,8 +360,4 @@ prepare_workbook()
 
 for ticker in tickers:
     test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
-    write_data_to_sheet(test)
     print(ticker + ": " + str(test.score))
-
-
-workbook.close()
