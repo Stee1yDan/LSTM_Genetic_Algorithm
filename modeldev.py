@@ -358,6 +358,6 @@ def start_genetic_algorithm(ticker: str):
 # data = prepare_data(data)
 # start_genetic_algorithm(current_ticker)
 
-for ticker in tickers:
-    test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
-    print(ticker + ": " + str(test.score))
+# for ticker in tickers:
+#     test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
+#     print(ticker + ": " + str(test.score))

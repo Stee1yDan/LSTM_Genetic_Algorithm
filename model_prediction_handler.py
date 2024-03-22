@@ -7,22 +7,7 @@ import yfinance as yf
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sklearn.preprocessing import MinMaxScaler
-
-
-class ModelParameters:
-    def __init__(self, ticker, has_second_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
-                 layer_3_neurons, dense_number, dropout_rate, optimizer, loss, score):
-        self.ticker = ticker
-        self.has_second_layer = has_second_layer
-        self.hyperparameters = hyperparameters
-        self.layer_1_neurons = layer_1_neurons
-        self.layer_2_neurons = layer_2_neurons
-        self.layer_3_neurons = layer_3_neurons
-        self.dense_number = dense_number
-        self.dropout_rate = dropout_rate
-        self.optimizer = optimizer
-        self.loss = loss
-        self.score = score
+from modeldev import ModelParameters
 
 
 workbook = xlsx.Workbook('models.xlsx')
@@ -181,7 +166,4 @@ def get_prediction(ticker: str):
     res = model.predict(x_full)
     res = scaler.inverse_transform(res.reshape(-1, 1))
 
-    print(res)
-
-
-get_prediction("PYPL")
+    return res
