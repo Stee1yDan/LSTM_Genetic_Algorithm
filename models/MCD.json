@@ -1,0 +1,1 @@
+"{\"dense_number\": 11, \"dropout_rate\": 0.4, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"RSI\"], \"layer_1_neurons\": 289, \"layer_2_neurons\": 64, \"layer_3_neurons\": 153, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9751283418089106, \"ticker\": \"MCD\"}"

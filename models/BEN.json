@@ -1,0 +1,1 @@
+"{\"dense_number\": 12, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Open\", \"Close\", \"Signal_Line\", \"ATR\", \"log_returns\"], \"layer_1_neurons\": 67, \"layer_2_neurons\": 265, \"layer_3_neurons\": 86, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9267131303970635, \"ticker\": \"BEN\"}"

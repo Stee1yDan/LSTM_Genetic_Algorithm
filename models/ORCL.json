@@ -1,0 +1,1 @@
+"{\"dense_number\": 5, \"dropout_rate\": 0.3, \"has_second_layer\": true, \"hyperparameters\": [\"Open\", \"ATR\", \"Signal_Line\", \"Close\"], \"layer_1_neurons\": 139, \"layer_2_neurons\": 69, \"layer_3_neurons\": 111, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9721378839636446, \"ticker\": \"ORCL\"}"

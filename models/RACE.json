@@ -1,0 +1,1 @@
+"{\"dense_number\": 7, \"dropout_rate\": 0.5, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"log_returns\"], \"layer_1_neurons\": 116, \"layer_2_neurons\": 22, \"layer_3_neurons\": 255, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9814623059029655, \"ticker\": \"RACE\"}"

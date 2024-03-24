@@ -1,0 +1,11 @@
+Flask
+waitress
+pandas
+tensorflow
+numpy
+matplotlib
+yfinance
+keras
+python-dateutil
+scikit-learn
+XlsxWriter

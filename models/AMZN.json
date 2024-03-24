@@ -1,0 +1,1 @@
+"{\"dense_number\": 2, \"dropout_rate\": 0.1, \"has_second_layer\": true, \"hyperparameters\": [\"Close\", \"Open\"], \"layer_1_neurons\": 160, \"layer_2_neurons\": 101, \"layer_3_neurons\": 125, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9504124330538782, \"ticker\": \"AMZN\"}"

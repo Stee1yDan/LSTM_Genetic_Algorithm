@@ -1,0 +1,1 @@
+"{\"dense_number\": 7, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"log_returns\", \"Signal_Line\", \"Close\", \"Open\", \"RSI\"], \"layer_1_neurons\": 252, \"layer_2_neurons\": 148, \"layer_3_neurons\": 224, \"loss\": \"mae\", \"optimizer\": \"adam\", \"score\": 0.9723548611118875, \"ticker\": \"AAPL\"}"

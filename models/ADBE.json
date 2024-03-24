@@ -1,0 +1,1 @@
+"{\"dense_number\": 1, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"pct_change\", \"Open\"], \"layer_1_neurons\": 33, \"layer_2_neurons\": 144, \"layer_3_neurons\": 134, \"loss\": \"mse\", \"optimizer\": \"adamax\", \"score\": 0.9501156745476711, \"ticker\": \"ADBE\"}"

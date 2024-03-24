@@ -1,0 +1,1 @@
+"{\"dense_number\": 4, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"RSI\", \"pct_change\", \"ATR\", \"log_returns\", \"Signal_Line\"], \"layer_1_neurons\": 213, \"layer_2_neurons\": 91, \"layer_3_neurons\": 71, \"loss\": \"mse\", \"optimizer\": \"adamax\", \"score\": 0.9341190211528081, \"ticker\": \"V\"}"

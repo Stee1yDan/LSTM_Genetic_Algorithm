@@ -1,0 +1,1 @@
+"{\"dense_number\": 4, \"dropout_rate\": 0.5, \"has_second_layer\": true, \"hyperparameters\": [\"Close\", \"Open\", \"ATR\", \"RSI\", \"log_returns\", \"pct_change\"], \"layer_1_neurons\": 89, \"layer_2_neurons\": 227, \"layer_3_neurons\": 192, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9716147440814027, \"ticker\": \"WAB\"}"

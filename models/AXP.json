@@ -1,0 +1,1 @@
+"{\"dense_number\": 2, \"dropout_rate\": 0.5, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"log_returns\", \"Signal_Line\", \"RSI\", \"ATR\", \"pct_change\"], \"layer_1_neurons\": 93, \"layer_2_neurons\": 182, \"layer_3_neurons\": 246, \"loss\": \"mse\", \"optimizer\": \"rmsprop\", \"score\": 0.96115939006122, \"ticker\": \"AXP\"}"

@@ -1,0 +1,1 @@
+"{\"dense_number\": 3, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"log_returns\", \"Signal_Line\", \"Close\", \"Open\"], \"layer_1_neurons\": 158, \"layer_2_neurons\": 107, \"layer_3_neurons\": 241, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9633535767314634, \"ticker\": \"GM\"}"

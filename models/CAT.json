@@ -1,0 +1,1 @@
+"{\"dense_number\": 5, \"dropout_rate\": 0.3, \"has_second_layer\": false, \"hyperparameters\": [\"pct_change\", \"Close\", \"Open\", \"RSI\"], \"layer_1_neurons\": 80, \"layer_2_neurons\": 178, \"layer_3_neurons\": 235, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.971156190647037, \"ticker\": \"CAT\"}"

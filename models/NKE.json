@@ -1,0 +1,1 @@
+"{\"dense_number\": 6, \"dropout_rate\": 0.1, \"has_second_layer\": true, \"hyperparameters\": [\"Close\", \"Open\", \"ATR\", \"Signal_Line\", \"log_returns\", \"pct_change\", \"RSI\"], \"layer_1_neurons\": 117, \"layer_2_neurons\": 233, \"layer_3_neurons\": 212, \"loss\": \"mae\", \"optimizer\": \"adam\", \"score\": 0.9576394501923923, \"ticker\": \"NKE\"}"

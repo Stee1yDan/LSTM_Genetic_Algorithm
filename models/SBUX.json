@@ -1,0 +1,1 @@
+"{\"dense_number\": 1, \"dropout_rate\": 0.4, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"RSI\", \"Open\"], \"layer_1_neurons\": 59, \"layer_2_neurons\": 227, \"layer_3_neurons\": 182, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9509918688139359, \"ticker\": \"SBUX\"}"

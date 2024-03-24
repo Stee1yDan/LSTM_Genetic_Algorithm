@@ -1,0 +1,1 @@
+"{\"dense_number\": 3, \"dropout_rate\": 0.3, \"has_second_layer\": false, \"hyperparameters\": [\"Open\", \"ATR\", \"Close\"], \"layer_1_neurons\": 86, \"layer_2_neurons\": 212, \"layer_3_neurons\": 149, \"loss\": \"mae\", \"optimizer\": \"adam\", \"score\": 0.9822583871954536, \"ticker\": \"GD\"}"

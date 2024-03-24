@@ -1,0 +1,1 @@
+"{\"dense_number\": 4, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Open\", \"ATR\", \"Close\"], \"layer_1_neurons\": 68, \"layer_2_neurons\": 60, \"layer_3_neurons\": 230, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9901712807459832, \"ticker\": \"PYPL\"}"

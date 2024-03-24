@@ -1,0 +1,1 @@
+"{\"dense_number\": 3, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\"], \"layer_1_neurons\": 52, \"layer_2_neurons\": 162, \"layer_3_neurons\": 219, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9544293863133937, \"ticker\": \"DPZ\"}"

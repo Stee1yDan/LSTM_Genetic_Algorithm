@@ -1,0 +1,1 @@
+"{\"dense_number\": 5, \"dropout_rate\": 0.4, \"has_second_layer\": false, \"hyperparameters\": [\"Signal_Line\", \"Close\", \"RSI\", \"Open\"], \"layer_1_neurons\": 153, \"layer_2_neurons\": 87, \"layer_3_neurons\": 132, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.8966909817822324, \"ticker\": \"DAL\"}"

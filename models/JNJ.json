@@ -1,0 +1,1 @@
+"{\"dense_number\": 7, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Open\", \"Close\"], \"layer_1_neurons\": 81, \"layer_2_neurons\": 110, \"layer_3_neurons\": 228, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9117900192688089, \"ticker\": \"JNJ\"}"

@@ -1,0 +1,1 @@
+"{\"dense_number\": 3, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"Signal_Line\", \"RSI\"], \"layer_1_neurons\": 195, \"layer_2_neurons\": 248, \"layer_3_neurons\": 94, \"loss\": \"mse\", \"optimizer\": \"adamax\", \"score\": 0.9714854323864982, \"ticker\": \"PFE\"}"

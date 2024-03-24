@@ -1,0 +1,1 @@
+"{\"dense_number\": 2, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"RSI\", \"Close\", \"Open\", \"pct_change\"], \"layer_1_neurons\": 338, \"layer_2_neurons\": 118, \"layer_3_neurons\": 202, \"loss\": \"mse\", \"optimizer\": \"adamax\", \"score\": 0.9582699610737877, \"ticker\": \"AMD\"}"

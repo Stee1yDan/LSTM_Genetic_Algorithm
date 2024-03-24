@@ -1,0 +1,1 @@
+"{\"dense_number\": 2, \"dropout_rate\": 0.1, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"pct_change\"], \"layer_1_neurons\": 123, \"layer_2_neurons\": 247, \"layer_3_neurons\": 172, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9705450966555303, \"ticker\": \"PEP\"}"

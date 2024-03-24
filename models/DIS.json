@@ -1,0 +1,1 @@
+"{\"dense_number\": 7, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"ATR\", \"log_returns\", \"pct_change\"], \"layer_1_neurons\": 205, \"layer_2_neurons\": 177, \"layer_3_neurons\": 145, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9799557670400426, \"ticker\": \"DIS\"}"
