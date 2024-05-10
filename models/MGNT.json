@@ -1,0 +1,1 @@
+"{\"dense_number\": 4, \"dropout_rate\": 0.2, \"has_second_layer\": true, \"hyperparameters\": [\"Close\", \"Open\", \"Signal_Line\"], \"layer_1_neurons\": 193, \"layer_2_neurons\": 53, \"layer_3_neurons\": 44, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9401111024002828, \"ticker\": \"MGNT\"}"

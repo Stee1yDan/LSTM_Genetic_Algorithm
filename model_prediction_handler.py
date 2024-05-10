@@ -2,10 +2,13 @@ import json
 import numpy as np
 import pandas as pd
 import xlsxwriter as xlsx
-import tensorflow as tf
-from tensorflow import keras
+
 import yfinance as yf
+import finam_scaper as fs
 from datetime import datetime
+
+from keras import models
+from tensorflow.keras import *
 from dateutil.relativedelta import relativedelta
 from sklearn.preprocessing import MinMaxScaler
 
@@ -29,6 +32,8 @@ class ModelParameters:
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True)
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
 
 def deserialize_modelparameters(deserialized_data):
     ticker = deserialized_data['ticker']
@@ -103,9 +108,12 @@ def write_data_to_sheet(model_parameters: ModelParameters):
 
 
 def download_data(ticker: str):
-    return yf.download(ticker, start=(datetime.today() - relativedelta(days=53)).strftime('%Y-%m-%d'),
-                       end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
-
+    if ticker in fs.ru_tickers:
+        return fs.get_ru_ticker_info(ticker, (datetime.today() - relativedelta(days=60)).strftime('%Y-%m-%d'),
+                           datetime.today().strftime('%Y-%m-%d'), "1d")
+    else:
+        return yf.download(ticker, start=(datetime.today() - relativedelta(days=60)).strftime('%Y-%m-%d'),
+                           end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
 
 def prepare_data(data):
     data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
@@ -162,7 +170,7 @@ def prepare_data(data):
     data["RSI"] = RSI
 
     data = data.iloc[14:]
-
+    print(data)
     return data
 
 
@@ -181,7 +189,7 @@ def fill_the_workbook():
 
 def get_prediction(ticker: str):
     data = prepare_data(download_data(ticker))
-    model = tf.keras.models.load_model("./models/" + ticker + "_model.keras")
+    model = models.load_model("./models/" + ticker + "_model.keras")
     model_parameters: ModelParameters
     with open("./models/" + ticker + ".json", "r") as f:
         temp = json.loads(json.load(f))

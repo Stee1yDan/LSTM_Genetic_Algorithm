@@ -1,0 +1,1 @@
+"{\"dense_number\": 7, \"dropout_rate\": 0.4, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"log_returns\", \"Open\"], \"layer_1_neurons\": 230, \"layer_2_neurons\": 139, \"layer_3_neurons\": 184, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9675992531165748, \"ticker\": \"GAZP\"}"

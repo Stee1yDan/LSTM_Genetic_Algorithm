@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
 import pickle
+import json
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
@@ -42,21 +43,16 @@ class ModelParameters:
         self.loss = loss
         self.score = score
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True)
+
 
 class ModelWrapper:
     def __init__(self, ticker, has_second_layer, hyperparameters, layer_1_neurons, layer_2_neurons,
                  layer_3_neurons, dense_number, dropout_rate, optimizer, prediction_units, future_units, loss):
-        self.inverse_scaled_y = None
-        self.predictions = None
         self.ticker = ticker
         self.has_second_layer = has_second_layer
-        self.scaler = None
-        self.score = None
-        self.y_test = None
-        self.x_test = None
-        self.y_train = None
-        self.x_train = None
-        self.model = None
         self.hyperparameters = hyperparameters
         self.layer_1_neurons = layer_1_neurons
         self.layer_2_neurons = layer_2_neurons
@@ -218,6 +214,9 @@ def download_data(ticker: str):
     return yf.download(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'),
                        end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
 
+def get_data_from_csv(ticker: str):
+    return pd.read_excel(f'{ticker}.xlsx')
+
 
 def prepare_data(data):
     data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
@@ -323,7 +322,7 @@ def start_genetic_algorithm(ticker: str):
     best_model: ModelWrapper = generation[0]
 
     for i in range(0, 3):
-        generation = generation[0:3]
+        generation = generation[0:2]
 
         print("Current generation: " + str(i))
         print("Current winner is: " + str(generation[0].score))
@@ -347,17 +346,12 @@ def start_genetic_algorithm(ticker: str):
         print("_____________________________Best Model:")
         best_model.to_string()
         best_model.save_graphic()
-        best_model.model.save(ticker + "_model.keras")
-        with open(ticker + ".pickle", "wb") as outfile:
-            pickle.dump(best_model.return_model_parameters(), outfile)
+        best_model.model.save(f"models/{ticker}_model.keras")
+        with open(f"models/{ticker}.json", "w") as outfile:
+            json.dump(best_model.return_model_parameters().toJSON(), outfile)
             outfile.close()
 
 
-# current_ticker = "META"
-# data = download_data(current_ticker)
-# data = prepare_data(data)
-# start_genetic_algorithm(current_ticker)
-
-# for ticker in tickers:
-#     test: ModelParameters = pickle.load(open(ticker + ".pickle", "rb"))
-#     print(ticker + ": " + str(test.score))
+data = get_data_from_csv("GAZP")
+data = prepare_data(data)
+start_genetic_algorithm("GAZP")

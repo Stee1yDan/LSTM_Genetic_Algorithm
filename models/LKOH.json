@@ -1,0 +1,1 @@
+"{\"dense_number\": 8, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"ATR\", \"RSI\", \"Signal_Line\"], \"layer_1_neurons\": 253, \"layer_2_neurons\": 240, \"layer_3_neurons\": 132, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.3968355105468754, \"ticker\": \"LKOH\"}"

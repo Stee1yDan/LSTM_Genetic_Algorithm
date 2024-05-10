@@ -1,0 +1,1 @@
+"{\"dense_number\": 5, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"RSI\", \"Close\", \"Open\"], \"layer_1_neurons\": 175, \"layer_2_neurons\": 237, \"layer_3_neurons\": 17, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9728268881515575, \"ticker\": \"GMKN\"}"

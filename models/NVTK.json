@@ -1,0 +1,1 @@
+"{\"dense_number\": 9, \"dropout_rate\": 0.3, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"RSI\", \"log_returns\", \"ATR\", \"pct_change\", \"Signal_Line\"], \"layer_1_neurons\": 91, \"layer_2_neurons\": 170, \"layer_3_neurons\": 44, \"loss\": \"mse\", \"optimizer\": \"adam\", \"score\": 0.9582561844873927, \"ticker\": \"NVTK\"}"

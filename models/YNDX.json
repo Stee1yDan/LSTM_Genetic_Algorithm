@@ -1,0 +1,1 @@
+"{\"dense_number\": 2, \"dropout_rate\": 0.5, \"has_second_layer\": false, \"hyperparameters\": [\"log_returns\", \"Open\", \"Close\", \"RSI\", \"ATR\", \"Signal_Line\"], \"layer_1_neurons\": 113, \"layer_2_neurons\": 89, \"layer_3_neurons\": 135, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9852772670485996, \"ticker\": \"YNDX\"}"

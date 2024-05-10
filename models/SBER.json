@@ -1,0 +1,1 @@
+"{\"dense_number\": 6, \"dropout_rate\": 0.3, \"has_second_layer\": false, \"hyperparameters\": [\"Close\", \"Open\", \"log_returns\"], \"layer_1_neurons\": 31, \"layer_2_neurons\": 426, \"layer_3_neurons\": 132, \"loss\": \"mse\", \"optimizer\": \"adamax\", \"score\": 0.9820535724367626, \"ticker\": \"SBER\"}"

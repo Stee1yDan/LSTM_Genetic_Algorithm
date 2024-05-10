@@ -1,0 +1,1 @@
+"{\"dense_number\": 6, \"dropout_rate\": 0.2, \"has_second_layer\": false, \"hyperparameters\": [\"ATR\", \"Open\", \"log_returns\", \"RSI\", \"Close\"], \"layer_1_neurons\": 79, \"layer_2_neurons\": 315, \"layer_3_neurons\": 90, \"loss\": \"mae\", \"optimizer\": \"adamax\", \"score\": 0.9895780273048163, \"ticker\": \"VTBR\"}"
