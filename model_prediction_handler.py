@@ -4,7 +4,7 @@ import pandas as pd
 import xlsxwriter as xlsx
 
 import yfinance as yf
-import finam_scaper as fs
+import moex_adapter as moex
 from datetime import datetime
 
 from keras import models
@@ -108,12 +108,12 @@ def write_data_to_sheet(model_parameters: ModelParameters):
 
 
 def download_data(ticker: str):
-    if ticker in fs.ru_tickers:
-        return fs.get_ru_ticker_info(ticker, (datetime.today() - relativedelta(days=60)).strftime('%Y-%m-%d'),
-                           datetime.today().strftime('%Y-%m-%d'), "1d")
+    if ticker in moex.ru_tickers:
+        return moex.get_historical_data(ticker, start=(datetime.today() - relativedelta(days=60)).strftime('%Y-%m-%d'),
+                       end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
     else:
         return yf.download(ticker, start=(datetime.today() - relativedelta(days=60)).strftime('%Y-%m-%d'),
-                           end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
+                       end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
 
 def prepare_data(data):
     data['EMA12'] = data['Close'].ewm(span=12, adjust=False).mean()
@@ -189,6 +189,7 @@ def fill_the_workbook():
 
 def get_prediction(ticker: str):
     data = prepare_data(download_data(ticker))
+    current_price = data['Close'].iloc[0]
     model = models.load_model("./models/" + ticker + "_model.keras")
     model_parameters: ModelParameters
     with open("./models/" + ticker + ".json", "r") as f:
@@ -214,4 +215,4 @@ def get_prediction(ticker: str):
     res = model.predict(x_full)
     res = scaler.inverse_transform(res.reshape(-1, 1))
 
-    return res[-1][0]
+    return (res[-1][0] - current_price) / current_price

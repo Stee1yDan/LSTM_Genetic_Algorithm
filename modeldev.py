@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
-import pickle
+import moex_adapter as moex
 import json
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -211,11 +211,13 @@ data = None
 
 
 def download_data(ticker: str):
-    return yf.download(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'),
+    if ticker in moex.ru_tickers:
+        return moex.get_historical_data(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'),
+                       end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
+    else:
+        return yf.download(ticker, start=(datetime.today() - relativedelta(years=4)).strftime('%Y-%m-%d'),
                        end=datetime.today().strftime('%Y-%m-%d'), interval="1d")
 
-def get_data_from_csv(ticker: str):
-    return pd.read_excel(f'{ticker}.xlsx')
 
 
 def prepare_data(data):
@@ -352,6 +354,6 @@ def start_genetic_algorithm(ticker: str):
             outfile.close()
 
 
-data = get_data_from_csv("GAZP")
+data = download_data("YNDX")
 data = prepare_data(data)
-start_genetic_algorithm("GAZP")
+start_genetic_algorithm("YNDX")
